@@ -14,11 +14,13 @@
 
 int main(void)
 {
-	volatile u8 Local_u8ADCReading;
+	u8 Local_u8ADCLM35;
+	u8 Local_u8ADCLDR;
 	u16 MilliVolt;
 	u8 temp;
 
 	MDIO_Error_State_SetPinDirection(PIN7,MDIO_PORTD,PIN_OUTPUT);
+	MDIO_Error_State_SetPortDirection(MDIO_PORTB,PORT_OUTPUT);
 
 	MADC_VidInit();                                       //  Initialize ADC
 	HCLCD_Vid4Bits_Init();
@@ -34,9 +36,83 @@ int main(void)
 
 	while (1)
 	{
-		Local_u8ADCReading = MADC_u16ADC_StartConversion(CHANNEL_0);
-		MilliVolt = (u16) ((u32) Local_u8ADCReading * 5000UL) / 256UL;
+		Local_u8ADCLM35 = MADC_u16ADC_StartConversion(CHANNEL_0);
+		Local_u8ADCLDR  = MADC_u16ADC_StartConversion(CHANNEL_1);
+		MilliVolt = (u16) ((u32) Local_u8ADCLM35 * 5000UL) / 256UL;
 		temp = MilliVolt / 10;
+		if ((Local_u8ADCLDR == 0) && (Local_u8ADCLDR <= 28)) {
+			MDIO_Error_State_SetPinValue(PIN0, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN1, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN2, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN3, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN4, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN5, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTB, PIN_HIGH);
+		} else if ((Local_u8ADCLDR > 28) && (Local_u8ADCLDR <= 56)) {
+			MDIO_Error_State_SetPinValue(PIN0, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN1, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN2, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN3, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN4, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN5, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTB, PIN_LOW);
+		} else if ((Local_u8ADCLDR > 56) && (Local_u8ADCLDR <= 84)) {
+			MDIO_Error_State_SetPinValue(PIN0, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN1, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN2, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN3, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN4, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN5, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTB, PIN_LOW);
+		} else if ((Local_u8ADCLDR > 84) && (Local_u8ADCLDR <= 112)) {
+			MDIO_Error_State_SetPinValue(PIN0, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN1, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN2, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN3, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN4, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN5, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTB, PIN_LOW);
+		} else if ((Local_u8ADCLDR > 112) && (Local_u8ADCLDR <= 140)) {
+			MDIO_Error_State_SetPinValue(PIN0, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN1, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN2, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN3, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN4, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN5, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTB, PIN_LOW);
+		} else if ((Local_u8ADCLDR > 140) && (Local_u8ADCLDR <= 168)) {
+			MDIO_Error_State_SetPinValue(PIN0, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN1, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN2, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN3, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN4, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN5, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTB, PIN_LOW);
+		} else if ((Local_u8ADCLDR > 168) && (Local_u8ADCLDR <= 196)) {
+			MDIO_Error_State_SetPinValue(PIN0, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN1, MDIO_PORTB, PIN_HIGH);
+			MDIO_Error_State_SetPinValue(PIN2, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN3, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN4, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN5, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTB, PIN_LOW);
+		} else if ((Local_u8ADCLDR > 196) && (Local_u8ADCLDR <= 224)) {
+			MDIO_Error_State_SetPinValue(PIN0, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN1, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN2, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN3, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN4, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN5, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTB, PIN_LOW);
+			MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTB, PIN_LOW);
+		}
 		if (temp > 15)
 		{
 			MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTD, PIN_HIGH);
@@ -47,7 +123,7 @@ int main(void)
 		}
 		HCLCD_Vid4Bits_SetPosition(1, 0);
 		HCLCD_Vid4Bits_DisplayString((u8*) "TEMP =");
-		HCLCD_Vid4Bits_DisplayNumber(temp);
+		HCLCD_Vid4Bits_DisplayNumber(Local_u8ADCLDR);
 		HCLCD_Vid4Bits_DisplayString((u8*) "C");
 		HCLCD_Vid4Bits_SetPosition(2,0);
 		HCLCD_Vid4Bits_DisplayString((u8*) "PRESS TO LOGIN");
