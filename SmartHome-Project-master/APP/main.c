@@ -10,7 +10,11 @@
 #include"../MCAL/MDIO/MDIO_Interface.h"
 #include"../HAL/HCLCD/HCLCD_Interface.h"
 #include"../MCAL/MADC/MADC_Interface.h"
+#include"../MCAL/GIE/GIE_Interface.h"
+#include"../MCAL/EXTI/EXTI_Interface.h"
 #include<util\delay.h>
+
+void ISR(void);
 
 int main(void)
 {
@@ -19,11 +23,26 @@ int main(void)
 	u16 MilliVolt;
 	u8 temp;
 
+
+
+
 	MDIO_Error_State_SetPinDirection(PIN7,MDIO_PORTD,PIN_OUTPUT);
+	MDIO_Error_State_SetPinDirection(PIN2,MDIO_PORTD,PIN_INPUT);
+	MDIO_Error_State_SetPinValue(PIN2, MDIO_PORTD, PIN_HIGH);
 	MDIO_Error_State_SetPortDirection(MDIO_PORTB,PORT_OUTPUT);
 
-	MADC_VidInit();                                       //  Initialize ADC
+
+	EXTI_voidInt0SenseControl();
+	EXTI_u8Int0SetCallBack(&ISR);
+	EXTI_u8IntEnable(EXTI_INT0);
+	GIE_voidEnable();
+    MADC_VidInit();                                       //  Initialize ADC
 	HCLCD_Vid4Bits_Init();
+
+
+
+
+
 	HCLCD_Vid4Bits_ClearScreen();
 	HCLCD_Vid4Bits_SetPosition(1, 0);
 
@@ -113,7 +132,7 @@ int main(void)
 			MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTB, PIN_LOW);
 			MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTB, PIN_LOW);
 		}
-		if (temp > 15)
+		if (temp > 10)
 		{
 			MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTD, PIN_HIGH);
 		}
@@ -123,7 +142,7 @@ int main(void)
 		}
 		HCLCD_Vid4Bits_SetPosition(1, 0);
 		HCLCD_Vid4Bits_DisplayString((u8*) "TEMP =");
-		HCLCD_Vid4Bits_DisplayNumber(Local_u8ADCLDR);
+		HCLCD_Vid4Bits_DisplayNumber(temp);
 		HCLCD_Vid4Bits_DisplayString((u8*) "C");
 		HCLCD_Vid4Bits_SetPosition(2,0);
 		HCLCD_Vid4Bits_DisplayString((u8*) "PRESS TO LOGIN");
@@ -131,4 +150,18 @@ int main(void)
 		HCLCD_Vid4Bits_ClearScreen();
 	}
 	return 0;
+}
+
+
+void ISR(void)
+{
+	HCLCD_Vid4Bits_ClearScreen();
+	_delay_ms(1000);
+	HCLCD_Vid4Bits_SetPosition(1, 0);
+
+	HCLCD_Vid4Bits_DisplayString((u8*) "LOGIN MODE");
+	_delay_ms(1000);
+	HCLCD_Vid4Bits_ClearScreen();
+	_delay_ms(1000);
+
 }

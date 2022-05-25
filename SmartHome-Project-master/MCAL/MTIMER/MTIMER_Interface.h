@@ -37,6 +37,4 @@ void MTIMER1_VidSenseControl(u8 Copy_u8SenseControl);
 void MTIMER1_VidOVF_SetCallBack(void(*Copy_VidCallBack)(void));
 void MTIMER1_VidICF_SetCallBack(void(*Copy_VidCallBack)(void));
 
-void TMR_voidTimer1SetCompareMatchValueChannelA	(u16 Copy_u16OCR1AValue);
-
 #endif /* MCAL_MTIMER_MTIMER_INTERFACE_H_ */

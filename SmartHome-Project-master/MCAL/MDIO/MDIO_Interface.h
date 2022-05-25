@@ -8,7 +8,7 @@
 #ifndef MCAL_MDIO_MDIO_INTERFACE_H_
 #define MCAL_MDIO_MDIO_INTERFACE_H_
 
-#include"LSTD_TYPES.h"
+#include"../../LIB/LSTD_TYPES.h"
 
 /*Define ATMEGA32 Ports*/
 
@@ -42,9 +42,6 @@ typedef enum
 	PIN6,
 	PIN7
 }Pin_t;
-
-
-void DIO_voidInit		 (void);
 
 /*Set Pin Direction Function */
 Error_State  MDIO_Error_State_SetPinDirection(u8 Copy_u8PinNumber,u8 Copy_u8PortNumber,u8 Copy_u8PinDirection);

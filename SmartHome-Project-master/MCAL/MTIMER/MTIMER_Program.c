@@ -5,8 +5,8 @@
  *      Author: Ahmed Khaled Hammad
  */
 
-#include"LSTD_TYPES.h"
-#include"LBIT_MATH.h"
+#include"../../LIB/LSTD_TYPES.h"
+#include"../../LIB/LBIT_MATH.h"
 #include"MTIMER_Private.h"
 #include"MTIMER_Config.h"
 #include"MTIMER_Interface.h"
@@ -128,36 +128,13 @@ void MTIMER1_VidInit(void)
 	TCCR1B|=TIMER1_SET_PRESCALER;
 	/*Mode Select*/
 #if TIMER1_SET_MODE == TIMER1_NORMAL_MODE
-//	/*Set Normal mode */
-//	CLR_BIT(TCCR1B,4);
-//	CLR_BIT(TCCR1B,3);
-//	CLR_BIT(TCCR1A,1);
-//	CLR_BIT(TCCR1A,0);
-//	/*TIMER OVERFLOW INTERRUPT ENABLLED*/
-//	SET_BIT(TIMSK,2);
-
-	/*Select Mode of ICR top Val, Fast Pwm mode*/
-
-	CLR_BIT(TCCR1A,TCCR1A_WGM10);
-	SET_BIT(TCCR1A,TCCR1A_WGM11);
-	SET_BIT(TCCR1B,TCCR1B_WGM12);
-	SET_BIT(TCCR1B,TCCR1B_WGM13);
-
-	/* Set Time to 20msec */
-	ICR1 = 20000;
-
-	/*Compare Match Value */
-	OCR1A = 750;
-
-	/* Non-INverting Mode For Channel A*/
-	SET_BIT(TCCR1A,TCCR1A_COM1A1);
-	CLR_BIT(TCCR1A,TCCR1A_COM1A0);
-
-	/* Start Timer By Setting the Prescalar Value to 8*/
-	CLR_BIT(TCCR1B,TCCR1B_CS12);
-	SET_BIT(TCCR1B,TCCR1B_CS11);
-	CLR_BIT(TCCR1B,TCCR1B_CS10);
-
+	/*Set Normal mode */
+	CLR_BIT(TCCR1B,4);
+	CLR_BIT(TCCR1B,3);
+	CLR_BIT(TCCR1A,1);
+	CLR_BIT(TCCR1A,0);
+	/*TIMER OVERFLOW INTERRUPT ENABLLED*/
+	SET_BIT(TIMSK,2);
 
 #elif TIMER1_SET_MODE == TIMER1_ICU_MODE
 	/*Set Normal mode */
@@ -221,12 +198,6 @@ void MTIMER1_VidSenseControl(u8 Copy_u8SenseControl)
 		/*Do Nothing*/
 	}
 }
-
-void TMR_voidTimer1SetCompareMatchValueChannelA	(u16 Copy_u16OCR1AValue)
-{
-	OCR1A = Copy_u16OCR1AValue;
-}
-
 void MTIMER1_VidOVF_SetCallBack(void(*Copy_VidCallBack)(void))
 {
 	TIMER1_CallBack =Copy_VidCallBack;
