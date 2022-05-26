@@ -18,6 +18,10 @@
 #include"../MCAL/MTIMER/MTIMER_Interface.h"
 #include<util\delay.h>
 
+
+
+#define PASSWORD_SAVED    1233
+
 void ISR(void);
 
 int main(void)
@@ -31,6 +35,10 @@ int main(void)
 	MDIO_Error_State_SetPinDirection(PIN3,MDIO_PORTA,PIN_OUTPUT);
 	MDIO_Error_State_SetPinDirection(PIN6,MDIO_PORTD,PIN_OUTPUT);
 	MDIO_Error_State_SetPinDirection(PIN7,MDIO_PORTD,PIN_OUTPUT);
+
+	MDIO_Error_State_SetPinDirection(PIN7,MDIO_PORTA,PIN_OUTPUT);
+	MDIO_Error_State_SetPinDirection(PIN6,MDIO_PORTA,PIN_OUTPUT);
+	MDIO_Error_State_SetPinDirection(PIN5,MDIO_PORTD,PIN_OUTPUT);
 
 	MDIO_Error_State_SetPinValue(PIN4, MDIO_PORTD, PIN_HIGH);
 	MDIO_Error_State_SetPinValue(PIN3, MDIO_PORTA, PIN_HIGH);
@@ -55,12 +63,15 @@ int main(void)
 	MDIO_Error_State_SetPortDirection(MDIO_PORTB,PORT_OUTPUT);
 
 
+
+
 	EXTI_voidInt0SenseControl();
 	EXTI_u8Int0SetCallBack(&ISR);
 	EXTI_u8IntEnable(EXTI_INT0);
 	GIE_voidEnable();
     MADC_VidInit();                                       //  Initialize ADC
 	HCLCD_Vid4Bits_Init();
+	MTIMER1_VidInit();
 
 
 
@@ -69,10 +80,16 @@ int main(void)
 	HCLCD_Vid4Bits_ClearScreen();
 	HCLCD_Vid4Bits_SetPosition(1, 0);
 
-	HCLCD_Vid4Bits_DisplayString((u8*) "SMART HOME");
+	HCLCD_Vid4Bits_DisplayString((u8*) "LOADING");
+	_delay_ms(200);
+	HCLCD_Vid4Bits_DisplayString((u8*) ".");
+	_delay_ms(200);
+	HCLCD_Vid4Bits_DisplayString((u8*) ".");
+	_delay_ms(200);
+	HCLCD_Vid4Bits_DisplayString((u8*) ".");
 	_delay_ms(1000);
 	HCLCD_Vid4Bits_ClearScreen();
-	_delay_ms(1000);
+	_delay_ms(200);
 
 
 
@@ -168,7 +185,7 @@ int main(void)
 		HCLCD_Vid4Bits_DisplayNumber(temp);
 		HCLCD_Vid4Bits_DisplayString((u8*) "C");
 		HCLCD_Vid4Bits_SetPosition(2,0);
-		HCLCD_Vid4Bits_DisplayString((u8*) "PRESS TO LOGIN");
+		HCLCD_Vid4Bits_DisplayString((u8*) "PRESS TO OPEN");
 		_delay_ms(1000);
 		HCLCD_Vid4Bits_ClearScreen();
 	}
@@ -179,9 +196,9 @@ int main(void)
 void ISR(void)
 {
 	u8 PASSWORD[4];
-	u8 temp_password;
+	u8 temp_password=0;
 	u8 Local_u8Counter = 0;
-	u16 PASSWORD_NUM;
+	u16 PASSWORD_NUM=0;
 	u8 Local_u8WrongPasswordCounter=0;
 	HCLCD_Vid4Bits_ClearScreen();
 	_delay_ms(1000);
@@ -212,28 +229,75 @@ void ISR(void)
 			PASSWORD_NUM = (10 * PASSWORD_NUM + PASSWORD[i]);
 		}
 
-		HCLCD_Vid4Bits_ClearScreen();
-		HCLCD_Vid4Bits_DisplayNumber(PASSWORD_NUM);
-		_delay_ms(5000);
 
-		while(Local_u8WrongPasswordCounter < 3)
+		HCLCD_Vid4Bits_ClearScreen();
+		HCLCD_Vid4Bits_DisplayString((u8*) "pw=");
+				HCLCD_Vid4Bits_DisplayNumber(PASSWORD_NUM);
+				_delay_ms(2000);
+
+		while(Local_u8WrongPasswordCounter < 2)
 		{
-			if(PASSWORD_NUM == 17089)
+			if(PASSWORD_NUM == PASSWORD_SAVED)
 			{
-				TMR_voidTimer1SetCompareMatchValueChannelA(750);
+				TMR_voidTimer1SetCompareMatchValueChannelA(2000);
+				MDIO_Error_State_SetPinValue(PIN7, MDIO_PORTA, PIN_HIGH);
+				HCLCD_Vid4Bits_ClearScreen();
+				HCLCD_Vid4Bits_DisplayString((u8*) "SUCCESSFUL LOGIN");
+				HCLCD_Vid4Bits_SetPosition(2, 0);
+				HCLCD_Vid4Bits_DisplayString((u8*) "WELCOME HOME");
+				_delay_ms(1000);
+				TMR_voidTimer1SetCompareMatchValueChannelA(500);
 				break;
 			}
 			else
 			{
 				Local_u8WrongPasswordCounter++;
+				temp_password=0;
+				Local_u8Counter=0;
+				PASSWORD_NUM = 0;
 				HCLCD_Vid4Bits_ClearScreen();
 				HCLCD_Vid4Bits_DisplayString((u8*) "WRONG PASSWORD");
+				_delay_ms(1000);
+				HCLCD_Vid4Bits_ClearScreen();
+				HCLCD_Vid4Bits_SetPosition(1, 0);
+                HCLCD_Vid4Bits_DisplayString((u8*) "ENTER PASSWORD");
+
+                do
+                		{
+                			KPD_u8GetSwitch(&temp_password);
+                			_delay_ms(20);
+                			if(temp_password != 0xff)
+                			{
+                				HCLCD_Vid4Bits_SetPosition(2, Local_u8Counter);
+                				HCLCD_Vid4Bits_DisplayNumber(temp_password-48);
+                				PASSWORD[Local_u8Counter]=(temp_password-48);
+                				Local_u8Counter++;
+                			}
+
+                		}
+                		while (Local_u8Counter <4);
+
+                		u8 i = 0;
+                		for (i = 0; i < 4; i++)
+                		{
+                			PASSWORD_NUM = (10 * PASSWORD_NUM + PASSWORD[i]);
+                		}
+
+
 			}
 		}
 
-		if (Local_u8WrongPasswordCounter >= 3)
+		if (Local_u8WrongPasswordCounter >= 2)
 		{
 			// turn on buzzer
+		MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTA, PIN_HIGH);
+		_delay_ms(200);
+		MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTA, PIN_LOW);
+		_delay_ms(200);
+		MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTA, PIN_HIGH);
+		_delay_ms(200);
+		MDIO_Error_State_SetPinValue(PIN6, MDIO_PORTA, PIN_LOW);
+
 		}
 
 
