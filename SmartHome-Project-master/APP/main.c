@@ -218,7 +218,7 @@ void ISR(void)
 
 		while(Local_u8WrongPasswordCounter < 3)
 		{
-			if(PASSWORD_NUM == 1233)
+			if(PASSWORD_NUM == 17089)
 			{
 				TMR_voidTimer1SetCompareMatchValueChannelA(750);
 				break;
