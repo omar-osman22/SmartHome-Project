@@ -32,4 +32,19 @@
 #define PORTD *((volatile u8*) 0x32)
 #define PIND  *((volatile u8*) 0x30)
 
+
+#define DIO_u8_INITIAL_OUTPUT				1
+#define DIO_u8_INITIAL_INPUT				0
+
+
+#define	DIO_u8_OUTPUT_HIGH					1
+#define	DIO_u8_OUTPUT_LOW					0
+#define	DIO_u8_INPUT_FLOATING				0
+#define	DIO_u8_INPUT_PULLUP					1
+
+#define Conc(b7,b6,b5,b4,b3,b2,b1,b0)		Conc_Help(b7,b6,b5,b4,b3,b2,b1,b0)
+#define Conc_Help(b7,b6,b5,b4,b3,b2,b1,b0)	0b##b7##b6##b5##b4##b3##b2##b1##b0
+
+
+
 #endif /* MCAL_MDIO_MDIO_PRIVATE_H_ */
